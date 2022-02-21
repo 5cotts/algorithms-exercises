@@ -21,7 +21,7 @@ const merge = (lhsArr, rhsArr) => {
 };
 
 const mergeSort = (arr) => {
-  console.log(`mergeSort([${arr}])`);
+  //console.log(`mergeSort([${arr}])`);
 
   let arrLength = arr.length;
 
