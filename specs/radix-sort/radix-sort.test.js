@@ -9,13 +9,40 @@
 
 */
 
+function getDigit(num, place, maxNumLength) {
+  const string = num.toString();
+  const size = string.length;
+  const mod = maxNumLength - size;
+  return string[place - mod] || 0;
+}
+
+function findLongestNumberLength(array) {
+  return Math.max(...array).toString().length;
+}
+
 function radixSort(array) {
-  // code goes here
+  const maxNumLength = findLongestNumberLength(array);
+  const buckets = new Array(10).fill().map(() => []);
+
+  for (let i = maxNumLength - 1; i >= 0; i--) {
+    while (array.length) {
+      const current = array.shift();
+      buckets[getDigit(current, i, maxNumLength)].push(current);
+    }
+
+    for (let j = 0; j < 10; j++) {
+      while (buckets[j].length) {
+        array.push(buckets[j].shift());
+      }
+    }
+  }
+
+  return array;
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("radix sort", function () {
+describe("radix sort", function () {
   it("should sort correctly", () => {
     const nums = [
       20,
