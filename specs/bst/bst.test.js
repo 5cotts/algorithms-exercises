@@ -16,22 +16,89 @@ right - Node/object - the right node which itself may be another tree
 
 */
 
-class Tree {
-  // code goes here
+class Node {
+  constructor(value = null, left = null, right= null) {
+    this.value = value;
+    this.left = left;
+    this.right = right;
+  }
+
+  serialize() {
+    const ans = { value: this.value };
+    ans.left = this.left === null ? null : this.left.serialize();
+    ans.right = this.right === null ? null : this.right.serialize();
+    return ans;
+  }
 }
 
-// you might consider using a Node class too
-// class Node {
-//   // code maybe goes here
-// }
+class Tree {
+  constructor(root) {
+    this.root = root;
+  }
+
+  // Wrote this function but it doesn't seem to be used anywhere.
+  find(value) {
+    let node = this.root;
+    while (node) {
+      if (node.value === value) {
+        return node.value;
+      } else if (value < node.value) {
+        node = node.left;
+      } else {
+        node = node.right;
+      }
+    }
+  }
+
+  add(value) {
+    let addNode = new Node(value);
+
+    if (!this.root) {
+      this.root = addNode;
+      return;
+    }
+
+    let node = this.root;
+    let searching = true;
+    while (searching) {
+      if (value < node.value) {
+        if (node.left) {
+            node = node.left;
+        } else {
+          node.left = addNode;
+          searching = false;
+        }
+      }
+
+      if (value > node.value) {
+        if (node.right) {
+          node = node.right;
+        } else {
+          node.right = addNode;
+          searching = false;
+        }
+      }
+    }
+  }
+
+  toObject() {
+    return this.root.serialize();
+  }
+}
+
 
 // unit tests
 // do not modify the below code
-describe.skip("Binary Search Tree", function () {
+describe("Binary Search Tree", function () {
   it("creates a correct tree", () => {
     const nums = [3, 7, 4, 6, 5, 1, 10, 2, 9, 8];
     const tree = new Tree();
     nums.map((num) => tree.add(num));
+
+    // This is extra :)
+    expect(tree.find(10)).toEqual(10);
+    expect(tree.find(1000)).toEqual(undefined);
+
     const objs = tree.toObject();
     // render(objs, nums);
 
