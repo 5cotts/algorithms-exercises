@@ -10,11 +10,32 @@
   factorial(3) = 6 
 */
 
-function factorial(n) {}
+// The below function works but it doesn't use recursion.
+// function factorial(n) {
+//   let result = 1;
+//   if (n === 1) {
+//     return result;
+//   }
+
+//   for (n; n > 0; n--) {
+//     result *= n;
+//   }
+
+//   return result;
+// }
+
+function factorial(n) {
+  if (n < 2) {
+    return 1;
+  } else {
+    return n * factorial(n-1);
+  }
+}
+
 
 // unit tests
 // do not modify the below code
-test.skip("factorials", () => {
+test("factorials", () => {
   expect(factorial(1)).toEqual(1);
   expect(factorial(2)).toEqual(2);
   expect(factorial(3)).toEqual(6);

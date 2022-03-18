@@ -23,67 +23,114 @@
   you work
 */
 
-class LinkedList {
-  constructor() {
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
+class Node {
+  constructor(value, next) {
+    this.value = value || null;
+    this.next = next || null;
   }
+}
+
+class LinkedList {
+  constructor(head) {
+    this.tail = this.head = (head || null);
+    this.length = head ? 1 : 0;
+  }
+
+  _testValue(search, nodeValue, _, __) {
+    return search === nodeValue;
+  }
+
+  _testIndex(search, _, i, __) {
+    return search === i;
+  }
+
+  _find(value, test = this._test) {
+    let current = this.head;
+    let i = 0;
+    while (current) {
+      if (test(value, current.value, i, current)) {
+        return current;
+      } else {
+        current = current.next;
+        i++;
+      }
+    }
+    return null;
+  }
+
   push(value) {
-    const node = new Node(value);
-    this.length++;
+    let node = new Node(value);
     if (!this.head) {
       this.head = node;
     } else {
       this.tail.next = node;
     }
+    this.length++;
     this.tail = node;
   }
+
   pop() {
-    return this.delete(this.length - 1);
+    // If no head, there is nothing to pop.
+    if (!this.head) {
+      return null;
+    // If head equals tail there is only one node to pop.
+    } else if (this.head === this.tail) {
+      let node = this.head;
+      this.head = this.tail = null;
+      return node.value;
+    }
+
+    // If more than one node, we'll need to iterate. O(n).
+    // Need to find the penultimate node and
+    // change it's next value to `null.`
+    let penultimateNode = this._find(
+      null,
+      (search, nodeValue, i, current) => current.next === this.tail
+    );
+    const tail = penultimateNode.next.value;
+    penultimateNode.next = null;
+    this.tail = penultimateNode;
+    this.length--;
+    return tail;
   }
-  _find(index) {
-    if (index >= this.length) return null;
+  
+  get(index) {
+    const node = this._find(index, this._testIndex);
+    if (!node) {
+      return null;
+    } else {
+    return node.value;
+    }
+  }
+
+  delete(index) {
+    const del = this._find(index, this._testIndex);
+    if (del === this.head) {
+      this.head = this.head.next;
+    } else if (del === this.tail) {
+      return this.pop(index);
+    }
+
+    const prevIndex = index - 1;
+    const prevNode = this._find(prevIndex, this._testIndex);
+    if (prevNode) {
+      prevNode.next = del.next;
+    }
+    this.length--
+    return del;
+  }
+
+  serialize() {
+    const ans = [];
     let current = this.head;
-    for (let i = 0; i < index; i++) {
+    if (!current) return ans;
+    while (current) {
+      ans.push(current.value);
       current = current.next;
     }
+    return ans;
+  }
 
-    return current;
-  }
-  get(index) {
-    const node = this._find(index);
-    if (!node) return void 0;
-    return node.value;
-  }
-  delete(index) {
-    if (index === 0) {
-      const head = this.head;
-      if (head) {
-        this.head = head.next;
-      } else {
-        this.head = null;
-        this.tail = null;
-      }
-      this.length--;
-      return head.value;
-    }
-
-    const node = this._find(index - 1);
-    const excise = node.next;
-    if (!excise) return null;
-    node.next = excise.next;
-    if (!node.next) this.tail = node.next;
-    this.length--;
-    return excise.value;
-  }
-}
-
-class Node {
-  constructor(value) {
-    this.value = value;
-    this.next = null;
-  }
 }
 
 // unit tests

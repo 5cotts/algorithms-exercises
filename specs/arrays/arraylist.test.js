@@ -18,12 +18,52 @@
 */
 
 class ArrayList {
-  // code goes here
+  constructor() {
+    this.length = 0;
+    this.nodes = new Object();
+  }
+
+  _lastIndex() {
+    if (this.length !== 0) {
+      return this.length - 1;
+    } else {
+      return this.length;
+    }
+  }
+
+  push(value) {
+    this.nodes[this.length] = value;
+    this.length++;
+  }
+
+  get(idx) {
+    return this.nodes[idx];
+  }
+
+  pop() {
+    let lastIdx = this._lastIndex();
+    let lastVal = this.get(lastIdx);
+    delete this.nodes[lastIdx];
+    this.length--;
+    return lastVal;
+  }
+
+  delete(idx) {
+    const del = this.get(idx);
+    const lastIdx = this._lastIndex();
+    for (let i = idx; i <= lastIdx; i++) {
+      // Replace each current index's value with that of the next index.
+      this.nodes[i] = this.get(i + 1);
+    }
+    delete this.nodes[lastIdx];
+    this.length--;
+    return del;
+  }
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("ArrayList", function () {
+describe("ArrayList", function () {
   const range = (length) =>
     Array.apply(null, { length: length }).map(Number.call, Number);
   const abcRange = (length) =>
